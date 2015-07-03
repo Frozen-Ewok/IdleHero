@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class Enemy_Data : MonoBehaviour {
@@ -8,6 +9,7 @@ public class Enemy_Data : MonoBehaviour {
 	public float m_fDamage;
 
 	public float m_fHealth;
+	public float m_fMax_Health;
 
 	public double m_fGold_Worth;
 	public double m_fExp_Worth;
@@ -25,13 +27,16 @@ public class Enemy_Data : MonoBehaviour {
 		HeroScript = m_goHero.GetComponent<Hero_Data>();
 	}
 
-	public void SetBaseStats()
+	public void SetBaseStats(int _iEnemyLevel)
 	{
-		m_fGold_Worth = Random.Range(3,5) * 1.3; 
+		m_iLevel = _iEnemyLevel;
+		m_fGold_Worth = Random.Range((3 * m_iLevel),(5 * m_iLevel));
 		m_fHealth = 10 * (m_iLevel * 0.65f);
-		m_fExp_Worth = m_iLevel * 1.8f;
-		
-		m_fDamage = m_iLevel * 2.2f;
+		m_fExp_Worth = m_iLevel * 2.2f;
+
+		m_fMax_Health = m_fHealth;
+
+		m_fDamage = m_iLevel * 1.9f;
 	}
 	
 	// Update is called once per frame

@@ -1,42 +1,53 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class Hero_Data : MonoBehaviour 
 {
-	//Hero Stats
+	//Hero levels
 	public int m_iLevel = 1;
 	private int m_iMax_Level = 5000;
 
+	//heros available stat points
 	public int m_iStatPoints = 0;
 
-	private float m_fAttack_Range = 2.0f;
-
-	public double m_iExp_To_Level = 20;
+	//Exp of the hero
+	public double m_iExp_To_Level = 10;
 	public double m_iCurrnet_Exp = 0;
-
-	public float m_fDamage = 2.0f;
-
+	
+	//Heros health stats
 	public float m_fMax_Health = 100f;
 	public float m_fHealth = 100f;
 	public float m_fHealth_Regen = 0.6f;
 
+	//heros mana stats
 	public float m_fMax_Mana = 50f;
 	public float m_fMana = 50f;
 	public float m_fMana_Regen = 0.1f;
 
+	//heros attack stats
+	public float m_fDamage = 2.0f;
+	private float m_fAttack_Range = 2.0f;
 	public float m_fAttack_Speed = 1.0f;
 	private float m_fAttack_Timer = 0.0f;
 
-	public double m_dGold = 0;
+	//the heros gold
+	public double m_dGold = 50;
 
+	//the timer used to do the regen
 	private float m_fRegenTimer = 0;
+
+	//the enemy the hero is attacking
 	private GameObject m_gEnemy;
 	private Enemy_Data m_EnemyScript;
+
+	//display the enemies stats
+	public Text m_textEnemyInfo;
 
 	// Use this for initialization
 	void Start () 
 	{
-	
+
 	}
 	
 	// Update is called once per frame
@@ -46,6 +57,7 @@ public class Hero_Data : MonoBehaviour
 
 		Regen();
 		Attack();
+		UpdateEnemyInfo();
 	}
 
 	//Do all the level upping and change the m_iExp_To_Level
@@ -136,5 +148,32 @@ public class Hero_Data : MonoBehaviour
 				m_EnemyScript = m_gEnemy.GetComponent<Enemy_Data>();
 			}
 		}
+	}
+	void UpdateEnemyInfo()
+	{
+		if(m_gEnemy)
+		{
+			float fEnemyDamage = m_EnemyScript.m_fDamage;
+			float fEnemyHp = m_EnemyScript.m_fHealth;
+			float fEnemyGold = (float)m_EnemyScript.m_fGold_Worth; 
+			float fEnemyExp = (float)m_EnemyScript.m_fExp_Worth;
+
+			if(fEnemyHp <= 0)
+			{
+				fEnemyHp = 0;
+			}
+
+			m_textEnemyInfo.text = "Enemy Info \n";
+			m_textEnemyInfo.text += "DPS: " + fEnemyDamage.ToString("F1") + "\n";
+			m_textEnemyInfo.text += "Health: " + fEnemyHp.ToString("F1") + "/" + m_EnemyScript.m_fMax_Health.ToString("F1") + "\n";
+			m_textEnemyInfo.text += "Gold: " + fEnemyGold.ToString("F1") + "\n";
+			m_textEnemyInfo.text += "Exp: " + fEnemyExp.ToString("F1") + "\n";
+		}
+	}
+
+	public void FullHeal()
+	{
+		m_fHealth = m_fMax_Health;
+		m_fMana = m_fMax_Mana;
 	}
 }
