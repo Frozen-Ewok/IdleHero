@@ -4,6 +4,8 @@ using System.Collections;
 
 public class Level_Data : MonoBehaviour 
 {
+
+	public static Level_Data Level_Info;
 	public GameObject Enemy;
 	public GameObject Hero;
 
@@ -13,20 +15,28 @@ public class Level_Data : MonoBehaviour
 	public float m_fEnemy_Level_Cost = 25;
 	public float m_fEnemy_Amount_Cost = 25;
 
-	private float m_fSpawn_Intervial = 20;
+	public float m_fSpawn_Intervial = 20;
 
-	private float m_fSpawn_Timer = 19.9f;
+	public float m_fSpawn_Timer = 19.9f;
 
-	private GameObject m_goHero;
 	private Hero_Data HeroScript;
 
 
 	// Use this for initialization
 	void Start () 
 	{
-		m_goHero = GameObject.FindGameObjectWithTag("Hero");
-		HeroScript = m_goHero.GetComponent<Hero_Data>();
+		if(Level_Info == null)
+		{
+			Level_Info = this;
+		}
+		else if(Level_Info != this)
+		{
+			Destroy(gameObject);
+		}
 
+		HeroScript = Hero_Data.Hero.GetComponent<Hero_Data>();
+
+		Game_Info.GameInfo.LoadLevel();
 	}
 	
 	// Update is called once per frame
@@ -52,14 +62,14 @@ public class Level_Data : MonoBehaviour
 	void SpawnEnemies()
 	{
 		//make sure the hero has a transform
-		if(m_goHero.transform)
+		if(Hero_Data.Hero.transform)
 		{
 			for(int i = 0; i < m_iAmount_Enemy_Spawn; ++i)
 			{
-				float fHeroX = m_goHero.transform.position.x;
-				float fHeroZ = m_goHero.transform.position.z;
+				float fHeroX = Hero_Data.Hero.transform.position.x;
+				float fHeroZ = Hero_Data.Hero.transform.position.z;
 
-				Vector3 EnemyPos = m_goHero.transform.position;
+				Vector3 EnemyPos = Hero_Data.Hero.transform.position;
 
 				EnemyPos.x = Random.Range (fHeroX - 50, fHeroX + 50);
 				EnemyPos.z = Random.Range (fHeroZ - 50, fHeroZ + 50);
@@ -67,7 +77,7 @@ public class Level_Data : MonoBehaviour
 				Enemy_Data EnemyScript = Enemy.GetComponent<Enemy_Data>();
 				EnemyScript.SetEnemyLevel(m_iEnemy_Level);
 
-				Instantiate(Enemy,EnemyPos, m_goHero.transform.rotation);
+				Instantiate(Enemy,EnemyPos, Hero_Data.Hero.transform.rotation);
 
 				EnemyScript.SetEnemyLevel(m_iEnemy_Level);
 				EnemyScript.SetBaseStats(m_iEnemy_Level);

@@ -67,17 +67,17 @@ public class HUD_Info : MonoBehaviour
 		m_textHeroStats.text = "Hero Stats \n";
 		m_textHeroStats.text += "Level: " + HeroScript.m_iLevel + "\n";
 		m_textHeroStats.text += "Gold: " +  HeroScript.m_dGold.ToString("F1") + "\n";
-		m_textHeroStats.text += "DPS: " +  (HeroScript.m_fDamage / HeroScript.m_fAttack_Speed) + "\n";
-		m_textHeroStats.text += "HP " + HeroScript.m_fHealth.ToString("F1") + "/" + HeroScript.m_fMax_Health + "\n";
-		m_textHeroStats.text += "HP Regen +" + HeroScript.m_fHealth_Regen.ToString("F1") + "/s \n";
-		m_textHeroStats.text += "MP " + HeroScript.m_fMana.ToString("F1") + "/" + HeroScript.m_fMax_Mana +"\n";
-		m_textHeroStats.text += "MP Regen +" + HeroScript.m_fMana_Regen.ToString("F1") + "/s \n";
+		m_textHeroStats.text += "DPS: " + ((HeroScript.m_fDamage + HeroScript.m_fDamage_Mod) * HeroScript.m_fDamage_Percent_Mod)  / HeroScript.m_fAttack_Speed + "\n";
+		m_textHeroStats.text += "HP " + HeroScript.m_fHealth.ToString("F1") + "/" + (HeroScript.m_fMax_Health + HeroScript.m_fHealth_Mod) * HeroScript.m_fHealth_Percent_Mod + "\n";
+		m_textHeroStats.text += "HP Regen +" + (HeroScript.m_fHealth_Regen + HeroScript.m_fHealth_Regen_Mod).ToString("F1") + "/s \n";
+		m_textHeroStats.text += "MP " + HeroScript.m_fMana.ToString("F1") + "/" + (HeroScript.m_fMax_Mana + HeroScript.m_fMana_Mod) * HeroScript.m_fMana_Percent_Mod +"\n";
+		m_textHeroStats.text += "MP Regen +" + (HeroScript.m_fMana_Regen + HeroScript.m_fMana_Regen_Mod).ToString("F1") + "/s \n";
 		m_textHeroStats.text += "EXP: \n"+ HeroScript.m_iCurrnet_Exp.ToString("F0") + " / " + HeroScript.m_iExp_To_Level.ToString("F0") + "\n";
 		
 		m_textAvailableStatPoints.text = "Stat Points: " + HeroScript.m_iStatPoints;
 
-		float fHealthCost = HeroScript.m_fMax_Health - HeroScript.m_fHealth;
-		float fManaCost = HeroScript.m_fMax_Mana - HeroScript.m_fMana;
+		float fHealthCost = ((HeroScript.m_fMax_Health + HeroScript.m_fHealth_Mod) * HeroScript.m_fHealth_Percent_Mod) - HeroScript.m_fHealth;
+		float fManaCost = ((HeroScript.m_fMax_Mana + HeroScript.m_fMana_Mod) * HeroScript.m_fMana_Percent_Mod) - HeroScript.m_fMana;
 
 		m_textFullHealth.text = "Buy full health heal: " + fHealthCost.ToString("F1") + " Gold";
 		m_textFullMana.text = "Buy full mana heal: " + fManaCost.ToString("F1") + " Gold";
@@ -142,19 +142,19 @@ public class HUD_Info : MonoBehaviour
 
 	public void BuyFullHealth()
 	{
-		float fCost = HeroScript.m_fMax_Health - HeroScript.m_fHealth;
+		float fCost = ((HeroScript.m_fMax_Health + HeroScript.m_fHealth_Mod) * HeroScript.m_fHealth_Percent_Mod) - HeroScript.m_fHealth;
 		if(HeroScript.m_dGold > fCost)
 		{
-			HeroScript.m_fHealth = HeroScript.m_fMax_Health;
+			HeroScript.m_fHealth = (HeroScript.m_fMax_Health + HeroScript.m_fHealth_Mod) * HeroScript.m_fHealth_Percent_Mod;
 			HeroScript.m_dGold -= fCost;
 		}
 	}
 	public void BuyFullMana()
 	{
-		float fCost = HeroScript.m_fMax_Mana - HeroScript.m_fMana;
+		float fCost = ((HeroScript.m_fMax_Mana + HeroScript.m_fMana_Mod) * HeroScript.m_fMana_Percent_Mod) - HeroScript.m_fMana;
 		if(HeroScript.m_dGold > fCost)
 		{
-			HeroScript.m_fMana = HeroScript.m_fMax_Mana;
+			HeroScript.m_fMana = (HeroScript.m_fMax_Mana + HeroScript.m_fMana_Mod) * HeroScript.m_fMana_Percent_Mod;
 			HeroScript.m_dGold -= fCost;
 		}
 	}

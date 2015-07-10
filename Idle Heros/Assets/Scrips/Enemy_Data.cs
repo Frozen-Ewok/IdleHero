@@ -14,17 +14,22 @@ public class Enemy_Data : MonoBehaviour {
 	public double m_fGold_Worth;
 	public double m_fExp_Worth;
 
-	private GameObject m_goHero;
+	//one in 10 chance at getting an item
+	private int m_iItem_Drop_Rate = 10;
+
 	private float m_fAttack_Timer = 0.0f;
 
 	private Hero_Data HeroScript;
 
+	private Inventory InventoryScript;
+
 	// Use this for initialization
 	void Start () 
 	{
-		m_goHero = GameObject.FindGameObjectWithTag("Hero");
+		HeroScript = Hero_Data.Hero.GetComponent<Hero_Data>();
 
-		HeroScript = m_goHero.GetComponent<Hero_Data>();
+		GameObject m_goInventory = GameObject.FindGameObjectWithTag("inventory");
+		InventoryScript = m_goInventory.GetComponent<Inventory>();
 	}
 
 	public void SetBaseStats(int _iEnemyLevel)
@@ -47,6 +52,12 @@ public class Enemy_Data : MonoBehaviour {
 			HeroScript.m_dGold += m_fGold_Worth;
 			HeroScript.m_iCurrnet_Exp += m_fExp_Worth;
 
+			float result = Random.Range(0, m_iItem_Drop_Rate);
+
+			result = 1;
+
+			if(result == 1)InventoryScript.SpawnItem();
+
 			Destroy(gameObject);
 		}
 
@@ -56,7 +67,7 @@ public class Enemy_Data : MonoBehaviour {
 	void AttackPlayer()
 	{
 		m_fAttack_Timer += Time.deltaTime;
-		Vector3 Direction = m_goHero.transform.position - transform.position;
+		Vector3 Direction = Hero_Data.Hero.transform.position - transform.position;
 
 		//move in to attack distance
 		if(Direction.magnitude > 2)

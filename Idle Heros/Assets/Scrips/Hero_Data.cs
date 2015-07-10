@@ -4,6 +4,9 @@ using System.Collections;
 
 public class Hero_Data : MonoBehaviour 
 {
+	//only one hero
+	public static Hero_Data Hero;
+
 	//Hero levels
 	public int m_iLevel = 1;
 	private int m_iMax_Level = 5000;
@@ -20,12 +23,23 @@ public class Hero_Data : MonoBehaviour
 	public float m_fHealth = 100f;
 	public float m_fHealth_Regen = 0.6f;
 
+	public float m_fHealth_Mod = 0.0f;
+	public float m_fHealth_Percent_Mod = 1.0f;
+	public float m_fHealth_Regen_Mod = 0.0f;
+
 	//heros mana stats
 	public float m_fMax_Mana = 50f;
 	public float m_fMana = 50f;
 	public float m_fMana_Regen = 0.1f;
 
+	public float m_fMana_Percent_Mod = 1.0f;
+	public float m_fMana_Mod = 0f;
+	public float m_fMana_Regen_Mod = 0.0f;
+
 	//heros attack stats
+	public float m_fDamage_Percent_Mod = 1.0f;
+	public float m_fDamage_Mod = 0.0f;
+
 	public float m_fDamage = 2.0f;
 	private float m_fAttack_Range = 2.0f;
 	public float m_fAttack_Speed = 1.0f;
@@ -47,7 +61,23 @@ public class Hero_Data : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
+		if(Hero == null)
+		{
+			Hero = this;
+		}
+		else if(Hero != this)
+		{
+			Destroy(gameObject);
+		}
 
+		Game_Info.GameInfo.LoadHero();
+	}
+	void OnDestroy()
+	{
+		Game_Info.GameInfo.SaveHero();
+		Game_Info.GameInfo.SaveEquip();
+		Game_Info.GameInfo.SaveInvenroty();
+		Game_Info.GameInfo.SaveLevel();
 	}
 	
 	// Update is called once per frame
@@ -85,22 +115,23 @@ public class Hero_Data : MonoBehaviour
 		{
 			m_fRegenTimer = 0;
 
-			if(m_fHealth + m_fHealth_Regen >= m_fMax_Health)
+			if(m_fHealth + m_fHealth_Regen >= ((m_fMax_Health + m_fHealth_Mod) * m_fHealth_Percent_Mod))
 			{
-				m_fHealth = m_fMax_Health;
+				m_fHealth = (m_fMax_Health + m_fHealth_Mod) * m_fHealth_Percent_Mod;
 			}
 			else
 			{
-				m_fHealth += m_fHealth_Regen;
+				m_fHealth += m_fHealth_Regen + m_fHealth_Regen_Mod;
 			}
 
-			if(m_fMana + m_fMana_Regen >= m_fMax_Mana)
+			if(m_fMana + m_fMana_Regen >= ((m_fMax_Mana + m_fMana_Mod) * m_fMana_Percent_Mod))
 			{
-				m_fMana = m_fMax_Mana;
+				m_fMana = (m_fMax_Mana + m_fMana_Mod) * m_fMana_Percent_Mod;
+
 			}
 			else
 			{
-				m_fMana += m_fMana_Regen;
+				m_fMana += m_fMana_Regen + m_fMana_Regen_Mod;
 			}
 		}
 	}
@@ -123,7 +154,7 @@ public class Hero_Data : MonoBehaviour
 				{
 					m_fAttack_Timer = 0.0f;
 
-					m_EnemyScript.m_fHealth -= m_fDamage;
+					m_EnemyScript.m_fHealth -= (m_fDamage + m_fDamage_Mod) * m_fDamage_Percent_Mod;
 				}
 			}
 		}
